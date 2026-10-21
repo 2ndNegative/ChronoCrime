@@ -89,7 +89,7 @@ So engineered 2050 cocaine sells far better in 2010 than street-grade cocaine. C
 
 - **Main source: dirty cash flow**, the smoothed rate of dirty cash earned plus spent per second, times `BALANCE.heat.perCashFlow`.
 - **Smaller source: stored goods**, from storage allocation.
-- **Decay:** heat moves toward a floor at `decayRate` per second. The **floor grows with empire size** (`floorPerLogEmpire × log10(1 + empireValue)`), which is the anti-snowball pressure.
+- **Decay:** heat moves toward a floor at `decayRate` per second, solved exactly per step: `dHeat/dt = sources − decayRate × (heat − floor)`. The **floor grows with empire size** (`floorPerLogEmpire × log10(1 + empireValue)`), which is the anti-snowball pressure.
 - **Effect:** output multiplier, smooth, no cliffs:
 
 ```
@@ -174,7 +174,16 @@ First run of era 1, for a player who checks in a few times a day. Encoded in `si
 - Plain JavaScript numbers. Nothing is designed to exceed 1e308.
 - Reaching 1e308 or Infinity (by very long play or cheating) sets `meta.reachedInfinity` and shows an easter egg.
 - Display via `formatNumber()`: suffixes up to `Dc`, then scientific.
-- Offline progress: on load, the game simulates the time away in 10 s steps, capped at 7 days (`BALANCE.offline`). Proposed values.
+
+## 10a. Saving, offline progress and background tabs (Decided)
+
+- **Autosave** to browser storage every 15 s, whenever the tab is hidden, and when the page closes. **Save now** in the Settings tab saves on demand.
+- **Export / import:** Settings shows the save as a single string (`CC` + UTF-8 base64 of the JSON save file) to copy and keep; pasting one back replaces the game. Whitespace and line breaks are ignored. Invalid strings are rejected with a reason and change nothing.
+- **Hard reset** deletes the save after a second confirming click.
+- **Loading** runs migrations, then fills any missing field with its default (`withDefaults` in `save.ts`). That is a safety net; reshaping a field still needs a migration. Saves from a newer version are refused.
+- **Offline progress:** on load (and after an import) the game simulates the time away, capped at 7 days, in 10 s steps, or longer steps if that would exceed 20,000 (`BALANCE.offline`). The player sees how long they were away. Cap values are Proposed.
+- **Background tabs keep running.** Browsers slow down page timers in hidden tabs, so the heartbeat comes from a Web Worker (`src/ui/ticker.worker.ts`). Every heartbeat calls `advanceTo(state, now)`, which uses real elapsed time and simulates any gap longer than 1 s in steps, so a slowed heartbeat never loses progress. Hidden tabs skip rendering.
+- **Step-size independence:** systems should give the same result whether time arrives as many small ticks or a few large steps. Heat does this by solving its equation exactly for each step. New systems must either do the same or be tested against it (see `tests/save.test.ts`).
 
 ---
 
@@ -259,4 +268,5 @@ All prose is written by hand by Magnus. Code never contains display text.
 
 | Date | Change |
 | --- | --- |
+| 2026-10-21 | Save system: autosave, string export/import, hard reset, offline catch-up, background ticking via a Web Worker. Heat now integrates exactly per step. |
 | 2026-10-21 | First version: design brainstorm decisions and project skeleton. |

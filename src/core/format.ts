@@ -14,3 +14,12 @@ export function formatNumber(n: number): string {
 export function formatMoney(n: number): string {
   return '$' + formatNumber(n);
 }
+
+/** Duration as h:mm:ss, hours unbounded (e.g. 26:04:09). */
+export function formatDuration(seconds: number): string {
+  const total = Math.floor(seconds);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}

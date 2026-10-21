@@ -8,11 +8,14 @@ import { Sidebar } from './Sidebar';
 import { ResourcesTab } from './ResourcesTab';
 import { BuildingsTab } from './BuildingsTab';
 import { StorageTab } from './StorageTab';
+import { SettingsTab } from './SettingsTab';
+import { formatDuration } from '../core/format';
 
 const TABS = [
   { id: 'resources', label: UI.tabResources, Component: ResourcesTab },
   { id: 'buildings', label: UI.tabBuildings, Component: BuildingsTab },
   { id: 'storage', label: UI.tabStorage, Component: StorageTab },
+  { id: 'settings', label: UI.tabSettings, Component: SettingsTab },
 ] as const;
 
 export function App() {
@@ -25,7 +28,12 @@ export function App() {
       <div className="body">
         <Sidebar />
         <main>
-          {store.offlineSeconds > 60 && <p className="notice">{t(UI.offlineReport, { seconds: Math.floor(store.offlineSeconds) })}</p>}
+          {store.offlineSeconds > 0 && (
+            <p className="notice">
+              {t(UI.offlineReport, { duration: formatDuration(store.offlineSeconds), seconds: Math.floor(store.offlineSeconds) })}{' '}
+              <button onClick={() => store.dismissOfflineReport()}>{t(UI.dismiss)}</button>
+            </p>
+          )}
           {state.meta.reachedInfinity && <p className="notice">{t(UI.easterEggInfinity)}</p>}
           <button className="action" onClick={() => store.act(hustle)}>
             {t(UI.actionHustle)}

@@ -6,6 +6,9 @@ import { BALANCE } from './balance';
 /** Smoothing factor for the dirty cash flow average, per second. */
 const FLOW_SMOOTHING = 0.2;
 
+/** Gaps longer than this are simulated in steps instead of one big tick. */
+const MAX_LIVE_STEP_SECONDS = 1;
+
 /**
  * Advances the game by dtSeconds. Pure game logic: no DOM, no clock reads, no randomness
  * without a seeded source. The UI, offline catch-up and the simulator all call this.
@@ -25,15 +28,30 @@ export function tick(state: GameState, dtSeconds: number): void {
   checkOverflow(state);
 }
 
-/** Catches up after time away, in fixed steps, up to the offline cap. */
-export function catchUp(state: GameState, now: number): number {
-  const elapsed = Math.min((now - state.lastTickAt) / 1000, BALANCE.offline.maxSeconds);
-  let left = Math.max(0, elapsed);
+/**
+ * Simulates `seconds` in fixed steps. Steps stay at BALANCE.offline.stepSeconds unless that
+ * would exceed maxSteps, in which case they get longer so loading stays fast.
+ */
+export function simulate(state: GameState, seconds: number): void {
+  const { stepSeconds, maxSteps } = BALANCE.offline;
+  const step = Math.max(stepSeconds, seconds / maxSteps);
+  let left = seconds;
   while (left > 0) {
-    const dt = Math.min(left, BALANCE.offline.stepSeconds);
+    const dt = Math.min(left, step);
     tick(state, dt);
     left -= dt;
   }
+}
+
+/**
+ * Brings the game up to `now` (ms). Used by the live loop, by background tabs whose timers the
+ * browser slows down, and after loading. Short gaps are one tick; longer ones are simulated in
+ * steps, capped at BALANCE.offline.maxSeconds. Returns the seconds simulated.
+ */
+export function advanceTo(state: GameState, now: number): number {
+  const elapsed = Math.min(Math.max(0, (now - state.lastTickAt) / 1000), BALANCE.offline.maxSeconds);
+  if (elapsed <= MAX_LIVE_STEP_SECONDS) tick(state, elapsed);
+  else simulate(state, elapsed);
   state.lastTickAt = now;
   return elapsed;
 }

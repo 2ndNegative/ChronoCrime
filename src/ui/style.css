@@ -25,3 +25,9 @@ button:disabled { opacity: 0.4; cursor: default; }
 .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
 .card ul { margin: 0; padding-left: 18px; color: var(--muted); }
 .notice { color: var(--accent); }
+.settings { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; align-items: start; }
+.settings button { align-self: flex-start; }
+textarea { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-family: monospace; font-size: 12px; resize: vertical; word-break: break-all; }
+.muted { color: var(--muted); }
+.error { color: #e06c6c; }
+button.danger { border-color: #e06c6c; color: #e06c6c; }

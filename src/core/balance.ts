@@ -36,5 +36,7 @@ export const BALANCE = {
     maxSeconds: 7 * 24 * 3600,
     /** Simulation step for offline catch-up, in seconds. */
     stepSeconds: 10,
+    /** Upper bound on catch-up steps, so a long absence loads quickly. Steps get longer instead. */
+    maxSteps: 20_000,
   },
 } as const;
