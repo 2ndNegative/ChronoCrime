@@ -1,39 +1,39 @@
 ﻿key,context,text
-ui.gameTitle,Game title in the header,
-ui.tab.resources,Tab name,
-ui.tab.buildings,Tab name,
-ui.tab.storage,Tab name,
+ui.gameTitle,Game title in the header, ChronoCrime [WIP]
+ui.tab.resources,Tab name, Resources
+ui.tab.buildings,Tab name, Buildings
+ui.tab.storage,Tab name, Storage
 ui.action.hustle,Button: the first manual action that earns dirty cash,
-ui.buy,Button to buy a building,
-ui.owned,Label before the number of owned buildings,
-ui.cost,Label before a price,
+ui.buy,Button to buy a building, Purchase
+ui.owned,Label before the number of owned buildings, Owned
+ui.cost,Label before a price, Price
 ui.capacity,Label before storage capacity,
 ui.heatPerSecond,Label before heat generated per second,
-ui.heatMultiplier,Label before a building heat multiplier,
+ui.heatMultiplier,Label before a building heat multiplier, Safety
 ui.storage.base,Name of the free starting storage for each storage type,
 ui.storage.full,Warning when a storage type is full and production pauses,
-ui.sidebar.pinned,Header of the pinned resources sidebar,
-ui.pin,Button: pin a resource to the sidebar,
-ui.unpin,Button: unpin a resource from the sidebar,
-ui.date,Label before the in-game date,
+ui.sidebar.pinned,Header of the pinned resources sidebar, Resources
+ui.pin,Button: pin a resource to the sidebar, Pin
+ui.unpin,Button: unpin a resource from the sidebar, Unpin
+ui.date,Label before the in-game date, Date
 ui.offlineReport,"Message after loading. Placeholders: {duration} = time away as h:mm:ss, {seconds} = time away in seconds",
 ui.easterEgg.infinity,Easter egg shown once a number passes 1e308,
-core.dirtyCash.name,Topbar resource name,
+core.dirtyCash.name,Topbar resource name, Dirty Money
 core.dirtyCash.desc,Topbar resource tooltip,
-core.cleanMoney.name,Topbar resource name,
+core.cleanMoney.name,Topbar resource name, Washed Money 
 core.cleanMoney.desc,Topbar resource tooltip,
-core.heat.name,Topbar resource name,
+core.heat.name,Topbar resource name, Heat
 core.heat.desc,Topbar resource tooltip,
-core.fear.name,Topbar resource name,
+core.fear.name,Topbar resource name, Fear
 core.fear.desc,Topbar resource tooltip,
-core.respect.name,Topbar resource name,
+core.respect.name,Topbar resource name, Respect
 core.respect.desc,Topbar resource tooltip,
 core.contacts.name,Topbar resource name,
 core.contacts.desc,Topbar resource tooltip,
-storageType.cash.name,Storage type name,
-storageType.narcotics.name,Storage type name,
-storageType.weapons.name,Storage type name,
-storageType.valuables.name,Storage type name,
+storageType.cash.name,Storage type name, Cash
+storageType.narcotics.name,Storage type name, Product
+storageType.weapons.name,Storage type name, Weapons
+storageType.valuables.name,Storage type name, Valuables
 good.dirtyCash.name,Good family name (stored as cash),
 good.dirtyCash.desc,Good family tooltip,
 good.weed.name,Good family name (stored as narcotics),
