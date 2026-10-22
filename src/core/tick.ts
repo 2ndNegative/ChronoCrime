@@ -2,6 +2,8 @@ import type { GameState } from './state';
 import { advanceTime } from './time';
 import { updateHeat } from './heat';
 import { BALANCE } from './balance';
+import { runCharacter } from './actions';
+import { checkMissions } from './missions';
 
 /** Smoothing factor for the dirty cash flow average, per second. */
 const FLOW_SMOOTHING = 0.2;
@@ -17,7 +19,8 @@ export function tick(state: GameState, dtSeconds: number): void {
   const run = state.run;
   advanceTime(run, dtSeconds);
 
-  // Systems run here in a fixed order as they are added: workers, operations, laundering, contacts.
+  // Systems run here in a fixed order as they are added: character, workers, operations, laundering, contacts.
+  runCharacter(run, dtSeconds);
 
   const instantFlow = run.dirtyMovedThisTick / Math.max(dtSeconds, 1e-6);
   const k = Math.min(1, FLOW_SMOOTHING * dtSeconds);
@@ -25,6 +28,7 @@ export function tick(state: GameState, dtSeconds: number): void {
   run.dirtyMovedThisTick = 0;
 
   updateHeat(run, dtSeconds);
+  checkMissions(run);
   checkOverflow(state);
 }
 

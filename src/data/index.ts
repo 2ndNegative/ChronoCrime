@@ -3,8 +3,10 @@ import { GOOD_FAMILIES, VARIANTS } from './goods';
 import { STORAGE_BUILDINGS } from './buildings';
 import { ERAS } from './eras';
 import { CONTACTS } from './contacts';
+import { ACTIONS } from './actions';
+import { MISSIONS } from './missions';
 
-export { STORAGE_TYPES, GOOD_FAMILIES, VARIANTS, STORAGE_BUILDINGS, ERAS, CONTACTS };
+export { STORAGE_TYPES, GOOD_FAMILIES, VARIANTS, STORAGE_BUILDINGS, ERAS, CONTACTS, ACTIONS, MISSIONS };
 
 function byId<T extends { id: string }>(list: T[], kind: string): (id: string) => T {
   const map = new Map(list.map((d) => [d.id, d]));
@@ -22,3 +24,5 @@ export const variant = byId(VARIANTS, 'variant');
 export const storageBuilding = byId(STORAGE_BUILDINGS, 'storage building');
 export const era = byId(ERAS, 'era');
 export const contact = byId(CONTACTS, 'contact');
+export const action = byId(ACTIONS, 'action');
+export const mission = byId(MISSIONS, 'mission');

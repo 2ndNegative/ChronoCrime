@@ -1,7 +1,7 @@
 import type { GameState } from './state';
 import { newGame } from './state';
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 3;
 const STORAGE_KEY = 'chronocrime.save';
 /** Marks an export string as ours, so pasting something else gives a clear error. */
 const EXPORT_PREFIX = 'CC';
@@ -15,7 +15,20 @@ interface SaveFile {
  * Migrations from version N to N+1. Add one whenever the shape of GameState changes,
  * and bump SAVE_VERSION. Never edit an old migration.
  */
-const MIGRATIONS: Record<number, (state: any) => any> = {};
+const MIGRATIONS: Record<number, (state: any) => any> = {
+  // 1 → 2: the player character's actions replace the hustle button; ageless flag for the time machine.
+  1: (state) => ({
+    ...state,
+    meta: { ...state.meta, characterAgeless: false },
+    run: {
+      ...state.run,
+      character: { actionId: null, progress: 0, inputsPaid: false, stalled: null },
+      actionSkills: {},
+    },
+  }),
+  // 2 → 3: missions. Already-met conditions complete on the first tick.
+  2: (state) => ({ ...state, run: { ...state.run, missions: { completed: [], recent: null } } }),
+};
 
 export class SaveError extends Error {}
 

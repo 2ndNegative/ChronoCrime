@@ -12,5 +12,6 @@ export function prestigePointsForRun(state: GameState): number {
 export function timeTravel(state: GameState, target: EraId): void {
   state.meta.prestigePoints += prestigePointsForRun(state);
   state.meta.totalJumps += 1;
+  state.meta.characterAgeless = true;
   state.run = newRun(target);
 }

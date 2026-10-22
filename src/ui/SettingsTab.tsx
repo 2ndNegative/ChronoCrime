@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { useGame, store } from './store';
 import { t } from '../loc/loc';
 import { UI } from '../loc/keys';
+import { SHOW_LOC_TOOLS } from '../config';
+import { LocProgress } from './LocProgress';
+import { DevSettings } from '../dev/DevSettings';
 
 export function SettingsTab() {
   useGame();
@@ -33,6 +36,8 @@ export function SettingsTab() {
 
   return (
     <section className="settings">
+      {SHOW_LOC_TOOLS && <LocProgress />}
+      <DevSettings />
       <div className="card">
         <strong>{t(UI.saveHeader)}</strong>
         <button onClick={() => setSaveFailed(!store.save())}>{t(UI.saveNow)}</button>

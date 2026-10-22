@@ -1,4 +1,4 @@
-import type { BuildingId, ContactId, EraId, GoodFamilyId, VariantId } from './types';
+import type { ActionId, BuildingId, ContactId, EraId, GoodFamilyId, MissionId, VariantId } from './types';
 import { ERAS } from '../data';
 
 export interface WorkerStats {
@@ -24,6 +24,29 @@ export interface TimeCapsule {
   contents: Record<VariantId, number>;
 }
 
+/** What the player character is doing. One action at a time; it repeats until changed. */
+export interface CharacterState {
+  actionId: ActionId | null;
+  /** Seconds into the current iteration. */
+  progress: number;
+  /** Whether the current iteration's inputs have been taken. */
+  inputsPaid: boolean;
+  /** Why the action is not progressing, for the UI. */
+  stalled: 'inputs' | 'storage' | null;
+}
+
+export interface ActionSkill {
+  xp: number;
+  level: number;
+  completions: number;
+}
+
+export interface MissionState {
+  completed: MissionId[];
+  /** Last completed mission, for the "mission complete" notice. Cleared when dismissed. */
+  recent: MissionId | null;
+}
+
 /** Survives time machine jumps. */
 export interface MetaState {
   prestigePoints: number;
@@ -32,6 +55,8 @@ export interface MetaState {
   capsules: TimeCapsule[];
   /** Set once any number overflows past 1e308. Unlocks the easter egg. */
   reachedInfinity: boolean;
+  /** The first time machine jump stops the player character from aging. */
+  characterAgeless: boolean;
 }
 
 /** Reset on every time machine jump. */
@@ -49,6 +74,9 @@ export interface RunState {
   buildings: Record<BuildingId, number>;
   contacts: Record<ContactId, number>;
   workers: Worker[];
+  character: CharacterState;
+  actionSkills: Record<ActionId, ActionSkill>;
+  missions: MissionState;
   /** Dirty cash moved (earned + spent) since the last tick. Feeds cash-flow heat. */
   dirtyMovedThisTick: number;
   /** Smoothed dirty cash flow per second, for display and heat. */
@@ -81,6 +109,9 @@ export function newRun(eraId: EraId): RunState {
     buildings: {},
     contacts: {},
     workers: [],
+    character: { actionId: null, progress: 0, inputsPaid: false, stalled: null },
+    actionSkills: {},
+    missions: { completed: [], recent: null },
     dirtyMovedThisTick: 0,
     dirtyFlowPerSecond: 0,
   };
@@ -90,7 +121,7 @@ export function newGame(now: number): GameState {
   const first = [...ERAS].sort((a, b) => a.order - b.order)[0];
   if (!first) throw new Error('No eras defined');
   return {
-    meta: { prestigePoints: 0, totalJumps: 0, timeMachineUpgrades: {}, capsules: [], reachedInfinity: false },
+    meta: { prestigePoints: 0, totalJumps: 0, timeMachineUpgrades: {}, capsules: [], reachedInfinity: false, characterAgeless: false },
     run: newRun(first.id),
     settings: { pinnedFamilies: ['weed', 'cocaine'] },
     lastTickAt: now,

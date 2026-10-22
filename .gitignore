@@ -5,3 +5,7 @@ dist/
 
 # Local launch and push helpers
 *.bat
+
+# Local secrets (dev mode password)
+.env.local
+*.local

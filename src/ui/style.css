@@ -25,9 +25,21 @@ button:disabled { opacity: 0.4; cursor: default; }
 .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
 .card ul { margin: 0; padding-left: 18px; color: var(--muted); }
 .notice { color: var(--accent); }
+.mission { background: var(--panel); border: 1px solid var(--accent); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
 .settings { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; align-items: start; }
 .settings button { align-self: flex-start; }
 textarea { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-family: monospace; font-size: 12px; resize: vertical; word-break: break-all; }
 .muted { color: var(--muted); }
 .error { color: #e06c6c; }
 button.danger { border-color: #e06c6c; color: #e06c6c; }
+::highlight(missing-loc) { background-color: #7a1f1f; color: #ffd0d0; }
+.loc-progress { grid-column: 1 / -1; }
+.loc-progress ul { max-height: 240px; overflow-y: auto; }
+.loc-progress code { color: var(--text); }
+progress { width: 100%; accent-color: var(--accent); }
+input { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px; }
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 10; }
+.modal { width: min(520px, calc(100vw - 32px)); }
+.row { display: flex; gap: 8px; }
+button.link { background: none; border: none; padding: 0; color: var(--accent); font-family: monospace; text-decoration: underline; }
+.active-card { border-color: var(--accent); }

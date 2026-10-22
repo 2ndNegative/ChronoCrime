@@ -3,11 +3,10 @@ ui.gameTitle,Game title in the header, ChronoCrime [WIP]
 ui.tab.resources,Tab name, Resources
 ui.tab.buildings,Tab name, Buildings
 ui.tab.storage,Tab name, Storage
-ui.action.hustle,Button: the first manual action that earns dirty cash,
 ui.buy,Button to buy a building, Purchase
 ui.owned,Label before the number of owned buildings, Owned
 ui.cost,Label before a price, Price
-ui.capacity,Label before storage capacity,
+ui.capacity,Label before storage capacity,Capacity
 ui.heatPerSecond,Label before heat generated per second,
 ui.heatMultiplier,Label before a building heat multiplier, Safety
 ui.storage.base,Name of the free starting storage for each storage type,
@@ -28,8 +27,6 @@ core.fear.name,Topbar resource name, Fear
 core.fear.desc,Topbar resource tooltip,
 core.respect.name,Topbar resource name, Respect
 core.respect.desc,Topbar resource tooltip,
-core.contacts.name,Topbar resource name,
-core.contacts.desc,Topbar resource tooltip,
 storageType.cash.name,Storage type name, Cash
 storageType.narcotics.name,Storage type name, Product
 storageType.weapons.name,Storage type name, Weapons
@@ -52,17 +49,17 @@ variant.cocaine.pure.name,"Variant of cocaine, quality 1.5, from 2026",
 variant.cocaine.engineered2050.name,"Variant of cocaine, quality 3, from 2050",
 variant.pistols.standard.name,"Variant of pistols, quality 1, from 2026",
 variant.gold.bullion.name,"Variant of gold, quality 1, from 1850",
-building.mattress.name,Storage building for cash,
+building.mattress.name,Storage building for cash,Mattress
 building.mattress.desc,Storage building tooltip,
-building.safe.name,Storage building for cash,
+building.safe.name,Storage building for cash,Safe
 building.safe.desc,Storage building tooltip,
-building.buriedCache.name,Storage building for cash,
+building.buriedCache.name,Storage building for cash,Buried Cache
 building.buriedCache.desc,Storage building tooltip,
-building.stashHouse.name,Storage building for narcotics,
+building.stashHouse.name,Storage building for narcotics,Stash house
 building.stashHouse.desc,Storage building tooltip,
-building.gunLocker.name,Storage building for weapons,
+building.gunLocker.name,Storage building for weapons,Gun locker
 building.gunLocker.desc,Storage building tooltip,
-building.vault.name,Storage building for valuables,
+building.vault.name,Storage building for valuables,Vault
 building.vault.desc,Storage building tooltip,
 era.modern.name,Era starting 2026,
 era.modern.desc,Era description,
@@ -74,11 +71,11 @@ contact.beatCop.name,"Contact, responds to fear",
 contact.beatCop.desc,Contact tooltip,
 contact.cityJudge.name,"Contact, responds to respect",
 contact.cityJudge.desc,Contact tooltip,
-ui.tab.settings,"Tab name: settings, saving, import and export",
+ui.tab.settings,"Tab name: settings, saving, import and export",Settings
 ui.dismiss,Button: close a message,
-ui.save.header,Settings section header: saving,
-ui.save.now,Button: save immediately,
-ui.save.savedAt,Status after saving. Placeholder {time} = local time of the last save,
+ui.save.header,Settings section header: saving,Save
+ui.save.now,Button: save immediately,Save now
+ui.save.savedAt,Status after saving. Placeholder {time} = local time of the last save,Saved at:
 ui.save.failed,Error: the browser refused to store the save,
 ui.save.exportHeader,Settings section header: export save as text,
 ui.save.exportCreate,Button: generate the export string,
@@ -91,3 +88,51 @@ ui.save.importFailed,"Error when the pasted save string is invalid. Placeholder 
 ui.reset.header,Settings section header: delete the save and start over,
 ui.reset.button,Button: start the hard reset,
 ui.reset.confirm,Button shown after the first click: confirm deleting everything,
+ui.loc.header,Settings section header for the text-writing tool (only shown while the game is in development),
+ui.loc.progress,Text-writing progress. Placeholders {written} and {total} = number of texts,
+ui.dev.header,Dev mode: Settings section header (local dev server only),Dev mode
+ui.dev.password,Dev mode: placeholder in the password field,
+ui.dev.unlock,Dev mode: button to unlock with the password,
+ui.dev.wrongPassword,Dev mode: error for a wrong password,
+ui.dev.active,Dev mode: explanation shown while unlocked (click unwritten text to write it),Dev mode active
+ui.dev.lock,Dev mode: button to leave dev mode,Leave dev mode
+ui.dev.editorSave,Dev mode text editor: save button (Enter also saves),Save
+ui.dev.editorCancel,Dev mode text editor: cancel button (Escape also cancels),Cancel
+ui.dev.saveFailed,"Dev mode text editor: error when writing the CSV failed, e.g. open in Excel. Placeholder {error} = technical reason",
+ui.tab.actions,Tab name: what the player character is doing,
+ui.tab.contacts,Tab name: named contacts you cultivate,
+ui.action.start,Button: make the character do this action (repeats until changed),
+ui.action.stop,Button: stop the current action,
+ui.action.level,"Action level and XP. Placeholders {level}, {xp}, {next} = XP needed for the next level",
+ui.action.duration,"Time per action. Placeholder {seconds} = seconds, already formatted",
+ui.action.completions,How often the action was completed. Placeholder {count},
+ui.action.needs,Label before the inputs an action uses up,
+ui.action.gives,Label before what an action produces,
+ui.action.stalledInputs,Status: the action waits because its inputs are missing,
+ui.action.stalledStorage,Status: the action waits because storage for its output is full,
+ui.action.idle,Status: the character is doing nothing,
+ui.mission.header,Header of the current-goal panel above the tabs,
+ui.mission.progress,"Progress toward the current mission. Placeholders {current} and {target}, already formatted",
+ui.mission.reward,Label before the reward of the current mission,
+ui.mission.complete,Notice after a mission completes. Placeholder {mission} = the mission name (already written),
+ui.mission.allDone,Shown in the goal panel once every mission of this era is done,
+ui.contact.level,Contact level. Placeholders {level} and {max},
+ui.contact.requires,"Requirement to meet a contact. Placeholders {meter} = Fear or Respect (already written), {amount}",
+action.pettyTheft.name,Action name (what the player character does),
+action.pettyTheft.desc,Action tooltip,
+action.buyWeed.name,Action name (what the player character does),
+action.buyWeed.desc,Action tooltip,
+action.dealWeed.name,Action name (what the player character does),
+action.dealWeed.desc,Action tooltip,
+action.streetFight.name,Action name (what the player character does),
+action.streetFight.desc,Action tooltip,
+mission.firstJob.name,Main mission 1 of modern. Goal: pettyTheft to level 2,
+mission.firstJob.desc,Mission text: hint at what to do and why,
+mission.pocketsFull.name,Main mission 2 of modern. Goal: hold 400 dirtyCash,
+mission.pocketsFull.desc,Mission text: hint at what to do and why,
+mission.firstStash.name,Main mission 3 of modern. Goal: own 1 mattress,
+mission.firstStash.desc,Mission text: hint at what to do and why,
+mission.firstDeal.name,Main mission 4 of modern. Goal: dealWeed to level 1,
+mission.firstDeal.desc,Mission text: hint at what to do and why,
+mission.makeAName.name,Main mission 5 of modern. Goal: fear 5,
+mission.makeAName.desc,Mission text: hint at what to do and why,

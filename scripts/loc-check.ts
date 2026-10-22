@@ -1,6 +1,8 @@
 // Checks loc/strings.csv against the keys the game needs.
 //   npm run loc:check   report missing, unused and unwritten keys
-//   npm run loc:sync    also append missing keys (empty text) and refresh contexts; never touches written text
+//   npm run loc:check -- --list   also list every unwritten key
+//   npm run loc:sync    also append missing keys (empty text), refresh contexts and drop unused empty rows;
+//                       never touches or removes written text
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -24,11 +26,16 @@ console.log(`Missing from CSV: ${missing.length}`);
 for (const s of missing) console.log(`  + ${s.key}`);
 console.log(`In CSV but unused: ${unused.length}`);
 for (const r of unused) console.log(`  ? ${r.key}`);
-console.log(`Text not written yet: ${unwritten.length + missing.length}`);
+const outstanding = unwritten.length + missing.length;
+console.log(`Text written: ${required.length - outstanding} of ${required.length} (${outstanding} outstanding)`);
+if (process.argv.includes('--list')) for (const r of unwritten) console.log(`  - ${r.key}  (${r.context})`);
 
 if (write) {
   const contexts = new Map(required.map((s) => [s.key, s.context]));
-  const updated = rows.map((r) => ({ ...r, context: contexts.get(r.key) ?? r.context }));
+  // Unused rows without text are dropped; unused rows with text are kept so nothing written is lost.
+  const updated = rows
+    .filter((r) => requiredSet.has(r.key) || r.text.trim() !== '')
+    .map((r) => ({ ...r, context: contexts.get(r.key) ?? r.context }));
   for (const s of missing) updated.push({ key: s.key, context: s.context, text: '' });
   writeFileSync(path, serializeLocCsv(updated), 'utf8');
   console.log(`Wrote ${path}`);

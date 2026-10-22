@@ -38,18 +38,22 @@ Permanent in every era, always visible in the topbar.
 
 | Resource | Kind | Main sources | What it does |
 | --- | --- | --- | --- |
+| 2026-10-22 | Missions: main chain gates tabs, actions and buildings; auto-complete in order with rewards; goal panel; save version 3. |
 | Dirty cash | Currency, physical | Operations, heists | Wages, recruitment, gear, bribes. Needs storage (storage type `cash`). |
 | Clean money | Currency, bank account | Laundering | Fronts, property, lawyers, promotions, contacts. No storage, no limit. |
 | Heat | Meter, never spent | Dirty cash flow, stored goods | Slows output (section 4). |
 | Fear | Meter, violent reputation | Violent jobs, enforcement | Cheaper extortion, rivals back off, workers obey. Adds heat, puts off respectable contacts. |
 | Respect | Meter, reliability | Honoured deals, paid debts | Better recruits, higher-tier deals, unlocks key contacts. Slow to build. |
-| Contacts | Named people, passives | Cultivated with clean money, gated by Fear or Respect | Specific perks, upgraded over time. |
 
 Fear and Respect pull against each other (Proposed), so fear-heavy and respect-heavy runs play differently.
 
 Topbar resources are fixed. Adding one needs a very strong reason and an entry here first.
 
-### 3.2 Goods (Decided)
+### 3.2 Contacts (Decided)
+
+Contacts are not a topbar number: each one is a semi-unique named person with their own tab. They are cultivated with clean money, gated by Fear or Respect, give specific perks and level up. The Contacts tab currently lists them with their requirements; cultivating is not built yet.
+
+### 3.3 Goods (Decided)
 
 Everything that is not a topbar resource is a **good**: drugs, precursors, weapons, liquor, gold. Goods are shown in the **Resources tab**; the player pins some to the **left sidebar**.
 
@@ -57,7 +61,7 @@ Everything that is not a topbar resource is a **good**: drugs, precursors, weapo
 - There is no fixed cap on goods per era.
 - Every good needs a **registry entry**: family, storage type, base heat, base value, value kind, the production chain it belongs to and its sink. A good with no sink or no chain does not ship.
 
-### 3.3 Variant formulas (Proposed)
+### 3.4 Variant formulas (Proposed)
 
 Variants are defined by parameters, never hand-tuned values. Code: `src/core/variants.ts`. Constants: `BALANCE.variants` and `BALANCE.prices`.
 
@@ -98,15 +102,47 @@ heatMultiplier = 1 / (1 + heat / softCap)
 
 - **Counters (Proposed):** lawyers and bribes lower the floor, lie-low orders speed up decay, clean fronts raise `softCap`.
 
-## 5. Workers (Proposed)
+## 5. Workers
 
-- A worker has an archetype, three stats (Brawn, Cunning, Charm), a level that rises with time on the job, and maybe a trait.
+- **Anonymous by default (Decided).** Early on and in bulk, workers are counts per type: 2 enforcers, 3 mules, 2 dealers. Counts are placed into jobs.
+- **Promotion (Decided).** Paying to promote one worker from a pool turns them into a named, higher-ranked or specialized worker with a name, an age and experience. Names come from name pools in the localization file.
+- **Proposed:** a promoted worker has three stats (Brawn, Cunning, Charm), a level that rises with time on the job, and maybe a trait.
 - Job slots live on operations, fronts and special roles. Output = slot base × stat fit × level bonus.
 - Recruitment costs dirty cash from a refreshing pool.
 - **What you manage zooms out with rank:** individuals → crews → lieutenants running districts.
 - Automation rewards: auto-fill, auto-recruit, lieutenants.
 - Never lost while away. High heat makes them lie low (lower output).
 - **Workers carry over between eras where it makes sense (Decided).** How many and which is set by time machine upgrades (Open).
+
+## 5a. Player character and actions (Decided)
+
+The player character is a person, not a cursor. What they do is chosen in the **Actions tab**; there is no click button. This is where the player feels the shift from getting their own hands dirty, to managing a crew, to running an empire: early growth comes from the character's actions, later from workers and operations.
+
+- One action at a time. It runs for its duration, applies its outcome, and **repeats until changed**, so it works offline.
+- Each action has **inputs** (taken when an iteration starts), **outputs** (given when it completes), **XP per completion** and an optional **unlock** (another action at some level).
+- Every action has its own **XP and level**. Level **strongly lowers duration** and **mildly raises outcome**:
+
+```
+duration = durationTier(def.durationTier) × (1 + level)^CURVES.actionDuration    (−0.6: level 10 ≈ 0.24×)
+outcome  = amount × (1 + level)^CURVES.actionOutcome × heatMultiplier            (+0.15: level 10 ≈ 1.43×)
+xp for next level = xpToNext(level)
+```
+
+- Idle-safe: an action **waits** when its inputs are missing or when there is no storage for any of its goods outputs. Nothing is lost; switching actions refunds inputs already taken.
+- Code: `src/core/actions.ts`, content `src/data/actions.ts` (placeholder chain: petty theft → buy weed → deal weed; street fight).
+- **No player mortality.** The character ages normally until the first time machine jump, which makes them immune to aging (`meta.characterAgeless`).
+
+## 5b. Missions (Decided unless tagged)
+
+The main mission chain tells the player where to go next **and gates the game's systems**. Hive's biggest onboarding problem was that every system unlocked at once and players did not know where to start; here each system arrives on its own, introduced by the mission before it.
+
+- **The main chain gates (Decided).** Tabs, actions and buildings stay hidden until the mission that introduces them is done. Actions and Settings are always visible; Resources, Buildings, Storage and Contacts appear through missions, and the goods sidebar appears with the Resources tab.
+- A mission is one condition (action level, hold an amount, own buildings, a meter value, clean money) plus a reward. Missions complete automatically, strictly in order, one current mission at a time, shown in a goal panel above the tabs with progress and reward. Several can complete in one tick if their conditions are already met.
+- **Missions give rewards (Decided)**, so even a trivial-feeling mission is worth doing. Rewards are goods, meters or clean money. Proposed: sized on the cost ladder relative to the mission's stage.
+- Anything gated names its mission with `requiresMission` (actions, buildings) or the mission lists `unlocksTabs`. Gates are checked through `src/core/missions.ts`.
+- Proposed: **the pacing milestones in section 9 become missions**, so the simulator measures exactly what the player is told to do. `npm run sim` already prints when each mission completes.
+- Proposed: optional side missions can teach systems the main path does not need, and never gate.
+- Placeholder chain (modern era): firstJob → pocketsFull → firstStash → firstDeal → makeAName. The simulator finishes it in about 7 minutes.
 
 ## 6. Rank ladder within a run (Proposed)
 
@@ -140,6 +176,7 @@ Each era must feel thematically and mechanically distinct: new goods, at least o
 - Every use of the time machine awards **prestige points** based on how well the run went. Code: `prestigePointsForRun()` (placeholder curve).
 - Prestige points **upgrade the time machine itself**, themed as gaining experience with time travel.
 - A jump resets the run (`RunState`) and keeps the meta state (`MetaState`).
+- The first jump makes the player character immune to aging (section 5a).
 - **Backward:** the main benefit is knowledge. Upgrades later allow bringing equipment, then workers.
 - A second prestige layer (paradoxes) is **Open**.
 
@@ -214,13 +251,27 @@ tests/            Vitest tests
 
 1. **Logic lives in `src/core`, content in `src/data`, text in `loc/strings.csv`.** UI components never compute game rules.
 2. **`tick()` is the only thing that advances time.** UI, offline catch-up and the simulator all call it. No `Date.now()` or unseeded randomness inside core.
-3. **Every tunable number lives in `BALANCE`** or in a data definition. No magic numbers in logic.
+3. **Every tunable number lives in `BALANCE` or on a ladder** (11.2). Data definitions name ladder rungs (`costTier(4)`, `'standard'`), never raw costs, durations or growth rates. No magic numbers in logic.
 4. **Ids are camelCase**, variant ids are `family.variant` (for example `cocaine.pure`). Ids are permanent once saves exist; renaming one needs a save migration.
 5. **Saves are versioned.** Any change to the shape of `GameState` bumps `SAVE_VERSION` and adds a migration in `save.ts`. Never edit an old migration.
 6. **Player actions** are functions `(state) => boolean` in core, called from UI through `store.act()`.
 7. **Idle-safety is a code rule:** no system may remove player resources, workers or buildings as a consequence of time passing. Pressure is expressed as multipliers.
 
-### 11.2 Localization (Decided)
+### 11.2 Ladders (Decided)
+
+As in Hive Incremental, every cost, duration, XP requirement and growth rate sits on a shared ladder in `src/core/ladders.ts`, so rebalancing a whole family of things means changing one value.
+
+| Ladder | Rung n | Current values |
+| --- | --- | --- |
+| `costTier(n)` | base × ratio^n | base 10, ratio √10 (two rungs per factor of ten) |
+| `durationTier(n)` | base × ratio^n seconds | base 2 s, ratio 2 |
+| `xpToNext(level)` | base × ratio^level | base 10, ratio 1.25 |
+| `GROWTH` | per-purchase cost growth | gentle 1.07, standard 1.15, steep 1.25, brutal 1.5 |
+| `CURVES` | exponents for (1 + level)^x | actionDuration −0.6, actionOutcome 0.15 |
+
+Fractional rungs are allowed for fine placement, but a value that needs one is worth a second look.
+
+### 11.3 Localization (Decided)
 
 All prose is written by hand by Magnus. Code never contains display text.
 
@@ -228,11 +279,13 @@ All prose is written by hand by Magnus. Code never contains display text.
 - `loc/strings.csv` has three columns: `key`, `context` (a hint for the writer, generated), `text` (written by hand).
 - `npm run loc:sync` adds rows for any new keys with empty text and refreshes the context column. It never changes written text.
 - `npm run loc:check` reports missing, unused and unwritten keys.
-- Unwritten text shows in game as `‹key›`, so gaps are visible.
+- Unwritten text shows in game as `‹key›`, highlighted in red (CSS Custom Highlight API, `src/ui/locHighlight.ts`). Settings lists every unwritten key with its context and a progress bar. Both are switched by `SHOW_LOC_TOOLS` in `src/config.ts`; turn it off before release.
+- **Dev mode** (local dev server only): Settings → Dev mode, unlocked with the password in `.env.local` (`VITE_DEV_PASSWORD`, gitignored, so the Pages build has no dev mode). While unlocked, clicking any unwritten text, or a key in the Settings list, opens an editor; saving writes straight into `loc/strings.csv` through a dev-server endpoint (`/__loc`, in `vite.config.ts`) and shows the text at once. The CSV cannot be written while Excel has it open.
+- The launcher prints how much text is written before starting the game. `npm run loc:check -- --list` lists every unwritten key.
 - Placeholders use `{name}`, for example `{seconds}`.
 - The CSV can be edited in a text editor, VS Code or Excel. The file is written as UTF-8 with a byte order mark; semicolon-separated files saved by Excel are read correctly.
 
-### 11.3 Balance simulator (Decided)
+### 11.4 Balance simulator (Decided)
 
 `npm run sim` plays the game headlessly with a scripted policy, using the same `tick()`, and prints when each pacing milestone was reached against its target. Every new system adds its milestone checks and a policy step. A system is not done until the simulator covers it.
 
@@ -259,7 +312,10 @@ All prose is written by hand by Magnus. Code never contains display text.
 
 - Which eras come after the 1980s?
 - Exact rules for which workers can travel through time.
-- Worker stats: are three enough, and do traits exist from the start?
+- Worker stats for promoted workers: are three enough, and do traits exist from the start?
+- Worker types and how anonymous workers are placed into jobs.
+- Do action levels survive a time machine jump (as knowledge), fully or partly?
+- Cultivating contacts: costs, levels and perks.
 - Is a second prestige layer (paradoxes) wanted?
 - Time capsules: how are they built, and how big can they get?
 - Per-era price tables to replace the flat inflation placeholder.
@@ -268,5 +324,7 @@ All prose is written by hand by Magnus. Code never contains display text.
 
 | Date | Change |
 | --- | --- |
+| 2026-10-21 | Contacts moved to their own tab. Actions tab replaces the hustle button (duration, outcome, XP, levels). Ladders for costs, durations, XP and growth. Workers: anonymous pools plus promotion. Missions and player agelessness recorded. Save version 2. |
+| 2026-10-21 | Text tools: missing text highlighted, progress list in Settings, password-protected dev mode with in-game text editor that writes to the CSV. |
 | 2026-10-21 | Save system: autosave, string export/import, hard reset, offline catch-up, background ticking via a Web Worker. Heat now integrates exactly per step. |
 | 2026-10-21 | First version: design brainstorm decisions and project skeleton. |

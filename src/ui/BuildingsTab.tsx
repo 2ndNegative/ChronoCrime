@@ -3,13 +3,13 @@ import { useGame, store } from './store';
 import { t } from '../loc/loc';
 import { UI, contentKey } from '../loc/keys';
 import { formatMoney, formatNumber } from '../core/format';
-import { buildingCost, buyBuilding, canAfford } from '../core/buildings';
+import { buildingCost, buyBuilding, canAfford, isBuildingAvailable } from '../core/buildings';
 
 export function BuildingsTab() {
   const { run } = useGame();
   return (
     <section className="grid">
-      {STORAGE_BUILDINGS.map((b) => {
+      {STORAGE_BUILDINGS.filter((b) => isBuildingAvailable(run, b.id)).map((b) => {
         const cost = buildingCost(run, b.id);
         return (
           <div key={b.id} className="card" title={t(contentKey.buildingDesc(b.id))}>
